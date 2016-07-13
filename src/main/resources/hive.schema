@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS sample_07_orc;
+CREATE TABLE sample_07_orc(
+  code  string,
+  description string,
+  total_emp string,
+  salary string
+)
+PARTITIONED BY (location STRING)
+CLUSTERED BY (code) into 5 buckets
+STORED AS ORC
+TBLPROPERTIES ("orc.compress"="SNAPPY","transactional"="true");
