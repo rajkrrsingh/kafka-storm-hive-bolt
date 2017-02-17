@@ -25,6 +25,7 @@ public class KafkaOutputBolt extends BaseRichBolt {
 	OutputCollector _collector;
 
 	public KafkaOutputBolt(String zkConnect, String serializerClass, String brokerList, String topic) {
+		logger.info(Thread.currentThread().getName()+" | "+Thread.currentThread().getStackTrace()[1].getMethodName()+" KafkaOutputBolt constructer get called");
 		this.zkConnect = zkConnect;
 		this.serializerClass = serializerClass;
 		this.topic = topic;
@@ -39,19 +40,22 @@ public class KafkaOutputBolt extends BaseRichBolt {
 		props.put("metadata.broker.list", brokerList);
 		ProducerConfig config = new ProducerConfig(props);
 		producer = new Producer<String, String>(config);
-
+		logger.info(Thread.currentThread().getName()+" | "+Thread.currentThread().getStackTrace()[1].getMethodName()+" prepare method executed");
 	}
 
 	public void execute(Tuple input) {
 		// TODO Auto-generated method stub
 		String msg = (String) input.getValue(0);
+		logger.info(Thread.currentThread().getName()+" | "+Thread.currentThread().getStackTrace()[1].getMethodName()+" input tuple msg : "+msg);
 		// writing msg as it is after getting it from kafkaSpout
 		KeyedMessage<String, String> dataValue = new KeyedMessage<String, String>(topic, msg);
+		logger.info(Thread.currentThread().getName()+" | "+Thread.currentThread().getStackTrace()[1].getMethodName()+" producer is about to send "+msg);
 		producer.send(dataValue);
 		_collector.ack(input);
 	}
 
 	public void declareOutputFields(OutputFieldsDeclarer declarer) {
+		logger.info(Thread.currentThread().getName()+" | "+Thread.currentThread().getStackTrace()[1].getMethodName()+" declaring fields ");
 		declarer.declare(new Fields("null"));
 	}
 }
